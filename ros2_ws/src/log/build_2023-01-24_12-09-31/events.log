@@ -1,0 +1,73 @@
+[0.000000] (-) TimerEvent: {}
+[0.000551] (-) JobUnselected: {'identifier': 'cpp_pubsub'}
+[0.000604] (-) JobUnselected: {'identifier': 'examples_rclcpp_minimal_action_client'}
+[0.000627] (-) JobUnselected: {'identifier': 'examples_rclcpp_minimal_action_server'}
+[0.000664] (-) JobUnselected: {'identifier': 'examples_rclcpp_minimal_client'}
+[0.000918] (-) JobUnselected: {'identifier': 'examples_rclcpp_minimal_composition'}
+[0.000939] (-) JobUnselected: {'identifier': 'examples_rclcpp_minimal_publisher'}
+[0.000992] (-) JobUnselected: {'identifier': 'examples_rclcpp_minimal_service'}
+[0.001012] (-) JobUnselected: {'identifier': 'examples_rclcpp_minimal_subscriber'}
+[0.001029] (-) JobUnselected: {'identifier': 'examples_rclcpp_minimal_timer'}
+[0.001046] (-) JobUnselected: {'identifier': 'examples_rclcpp_multithreaded_executor'}
+[0.001063] (-) JobUnselected: {'identifier': 'examples_rclpy_executors'}
+[0.001081] (-) JobUnselected: {'identifier': 'examples_rclpy_minimal_action_client'}
+[0.001101] (-) JobUnselected: {'identifier': 'examples_rclpy_minimal_action_server'}
+[0.001136] (-) JobUnselected: {'identifier': 'examples_rclpy_minimal_client'}
+[0.001157] (-) JobUnselected: {'identifier': 'examples_rclpy_minimal_publisher'}
+[0.001565] (-) JobUnselected: {'identifier': 'examples_rclpy_minimal_service'}
+[0.001585] (-) JobUnselected: {'identifier': 'examples_rclpy_minimal_subscriber'}
+[0.002036] (-) JobUnselected: {'identifier': 'more_interfaces'}
+[0.002108] (-) JobUnselected: {'identifier': 'my_package'}
+[0.002202] (-) JobUnselected: {'identifier': 'py_pubsub'}
+[0.002239] (-) JobUnselected: {'identifier': 'py_srvcli'}
+[0.002260] (-) JobUnselected: {'identifier': 'tutorial_interfaces'}
+[0.002297] (python_parameters) JobQueued: {'identifier': 'python_parameters', 'dependencies': OrderedDict()}
+[0.002323] (python_parameters) JobStarted: {'identifier': 'python_parameters'}
+[0.099837] (-) TimerEvent: {}
+[0.200233] (-) TimerEvent: {}
+[0.300551] (-) TimerEvent: {}
+[0.400921] (-) TimerEvent: {}
+[0.501212] (-) TimerEvent: {}
+[0.601475] (-) TimerEvent: {}
+[0.659327] (python_parameters) Command: {'cmd': ['/usr/bin/python3', 'setup.py', 'egg_info', '--egg-base', '../build/python_parameters', 'build', '--build-base', '/home/cvar/ros2_ws/src/build/python_parameters/build', 'install', '--record', '/home/cvar/ros2_ws/src/build/python_parameters/install.log', '--install-scripts', '$base/lib/python_parameters', '--single-version-externally-managed'], 'cwd': '/home/cvar/ros2_ws/src/python_parameters', 'env': {'GJS_DEBUG_TOPICS': 'JS ERROR;JS LOG', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'cvar', 'SSH_AGENT_PID': '1875', 'XDG_SESSION_TYPE': 'x11', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/foxy/opt/yaml_cpp_vendor/lib:/opt/ros/foxy/opt/rviz_ogre_vendor/lib:/opt/ros/foxy/lib/x86_64-linux-gnu:/opt/ros/foxy/lib', 'HOME': '/home/cvar', 'OLDPWD': '/home/cvar/ros2_ws/src/python_parameters', 'DESKTOP_SESSION': 'ubuntu', 'ROS_PYTHON_VERSION': '3', 'GNOME_SHELL_SESSION_MODE': 'ubuntu', 'GTK_MODULES': 'gail:atk-bridge', 'MANAGERPID': '1700', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'MANDATORY_PATH': '/usr/share/gconf/ubuntu.mandatory.path', 'IM_CONFIG_PHASE': '1', 'ROS_DISTRO': 'foxy', 'LOGNAME': 'cvar', 'JOURNAL_STREAM': '8:47569', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'DEFAULTS_PATH': '/usr/share/gconf/ubuntu.default.path', 'USERNAME': 'cvar', 'TERM': 'xterm-256color', 'GNOME_DESKTOP_SESSION_ID': 'this-is-deprecated', 'ROS_LOCALHOST_ONLY': '0', 'WINDOWPATH': '2', 'PATH': '/opt/ros/foxy/bin:/home/cvar/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'SESSION_MANAGER': 'local/cvar-All-Series:@/tmp/.ICE-unix/1912,unix/cvar-All-Series:/tmp/.ICE-unix/1912', 'INVOCATION_ID': 'd8b79fbcf87846a7b039a563b8249cb6', 'XDG_MENU_PREFIX': 'gnome-', 'GNOME_TERMINAL_SCREEN': '/org/gnome/Terminal/screen/f9c63494_9140_4d34_a662_bb200bf67d34', 'XDG_RUNTIME_DIR': '/run/user/1000', 'DISPLAY': ':0', 'LANG': 'es_ES.UTF-8', 'XDG_CURRENT_DESKTOP': 'ubuntu:GNOME', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'ubuntu', 'XAUTHORITY': '/run/user/1000/gdm/Xauthority', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'GNOME_TERMINAL_SERVICE': ':1.826', 'SSH_AUTH_SOCK': '/run/user/1000/keyring/ssh', 'ROS_DOMAIN_ID': '0', 'AMENT_PREFIX_PATH': '/opt/ros/foxy', 'SHELL': '/bin/bash', 'QT_ACCESSIBILITY': '1', 'GDMSESSION': 'ubuntu', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'GPG_AGENT_INFO': '/run/user/1000/gnupg/S.gpg-agent:0:1', 'GJS_DEBUG_OUTPUT': 'stderr', 'QT_IM_MODULE': 'ibus', 'PWD': '/home/cvar/ros2_ws/src/build/python_parameters', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-ubuntu:/etc/xdg', 'XDG_DATA_DIRS': '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/cvar/ros2_ws/src/build/python_parameters/prefix_override:/home/cvar/ros2_ws/src/install/python_parameters/lib/python3.8/site-packages:/opt/ros/foxy/lib/python3.8/site-packages', 'COLCON': '1', 'VTE_VERSION': '6003'}, 'shell': False}
+[0.701595] (-) TimerEvent: {}
+[0.801899] (-) TimerEvent: {}
+[0.876090] (python_parameters) StdoutLine: {'line': b'running egg_info\n'}
+[0.876666] (python_parameters) StdoutLine: {'line': b'creating ../build/python_parameters/python_parameters.egg-info\n'}
+[0.876887] (python_parameters) StdoutLine: {'line': b'writing ../build/python_parameters/python_parameters.egg-info/PKG-INFO\n'}
+[0.877124] (python_parameters) StdoutLine: {'line': b'writing dependency_links to ../build/python_parameters/python_parameters.egg-info/dependency_links.txt\n'}
+[0.877401] (python_parameters) StdoutLine: {'line': b'writing entry points to ../build/python_parameters/python_parameters.egg-info/entry_points.txt\n'}
+[0.877615] (python_parameters) StdoutLine: {'line': b'writing requirements to ../build/python_parameters/python_parameters.egg-info/requires.txt\n'}
+[0.877711] (python_parameters) StdoutLine: {'line': b'writing top-level names to ../build/python_parameters/python_parameters.egg-info/top_level.txt\n'}
+[0.878625] (python_parameters) StdoutLine: {'line': b"writing manifest file '../build/python_parameters/python_parameters.egg-info/SOURCES.txt'\n"}
+[0.902006] (-) TimerEvent: {}
+[0.910332] (python_parameters) StdoutLine: {'line': b"reading manifest file '../build/python_parameters/python_parameters.egg-info/SOURCES.txt'\n"}
+[0.911109] (python_parameters) StdoutLine: {'line': b"writing manifest file '../build/python_parameters/python_parameters.egg-info/SOURCES.txt'\n"}
+[0.911399] (python_parameters) StdoutLine: {'line': b'running build\n'}
+[0.911549] (python_parameters) StdoutLine: {'line': b'running build_py\n'}
+[0.911677] (python_parameters) StdoutLine: {'line': b'creating /home/cvar/ros2_ws/src/build/python_parameters/build\n'}
+[0.911783] (python_parameters) StdoutLine: {'line': b'creating /home/cvar/ros2_ws/src/build/python_parameters/build/lib\n'}
+[0.911889] (python_parameters) StdoutLine: {'line': b'creating /home/cvar/ros2_ws/src/build/python_parameters/build/lib/python_parameters\n'}
+[0.911976] (python_parameters) StdoutLine: {'line': b'copying python_parameters/__init__.py -> /home/cvar/ros2_ws/src/build/python_parameters/build/lib/python_parameters\n'}
+[0.912049] (python_parameters) StdoutLine: {'line': b'copying python_parameters/python_parameters_node.py -> /home/cvar/ros2_ws/src/build/python_parameters/build/lib/python_parameters\n'}
+[0.912120] (python_parameters) StdoutLine: {'line': b'running install\n'}
+[0.912743] (python_parameters) StdoutLine: {'line': b'running install_lib\n'}
+[0.913619] (python_parameters) StdoutLine: {'line': b'creating /home/cvar/ros2_ws/src/install/python_parameters/lib/python3.8/site-packages/python_parameters\n'}
+[0.913771] (python_parameters) StdoutLine: {'line': b'copying /home/cvar/ros2_ws/src/build/python_parameters/build/lib/python_parameters/__init__.py -> /home/cvar/ros2_ws/src/install/python_parameters/lib/python3.8/site-packages/python_parameters\n'}
+[0.913934] (python_parameters) StdoutLine: {'line': b'copying /home/cvar/ros2_ws/src/build/python_parameters/build/lib/python_parameters/python_parameters_node.py -> /home/cvar/ros2_ws/src/install/python_parameters/lib/python3.8/site-packages/python_parameters\n'}
+[0.914366] (python_parameters) StdoutLine: {'line': b'byte-compiling /home/cvar/ros2_ws/src/install/python_parameters/lib/python3.8/site-packages/python_parameters/__init__.py to __init__.cpython-38.pyc\n'}
+[0.915478] (python_parameters) StdoutLine: {'line': b'byte-compiling /home/cvar/ros2_ws/src/install/python_parameters/lib/python3.8/site-packages/python_parameters/python_parameters_node.py to python_parameters_node.cpython-38.pyc\n'}
+[0.915888] (python_parameters) StdoutLine: {'line': b'running install_data\n'}
+[0.916384] (python_parameters) StdoutLine: {'line': b'creating /home/cvar/ros2_ws/src/install/python_parameters/share/ament_index\n'}
+[0.916576] (python_parameters) StdoutLine: {'line': b'creating /home/cvar/ros2_ws/src/install/python_parameters/share/ament_index/resource_index\n'}
+[0.916876] (python_parameters) StdoutLine: {'line': b'creating /home/cvar/ros2_ws/src/install/python_parameters/share/ament_index/resource_index/packages\n'}
+[0.916985] (python_parameters) StdoutLine: {'line': b'copying resource/python_parameters -> /home/cvar/ros2_ws/src/install/python_parameters/share/ament_index/resource_index/packages\n'}
+[0.917063] (python_parameters) StdoutLine: {'line': b'copying package.xml -> /home/cvar/ros2_ws/src/install/python_parameters/share/python_parameters\n'}
+[0.917135] (python_parameters) StdoutLine: {'line': b'running install_egg_info\n'}
+[0.918364] (python_parameters) StdoutLine: {'line': b'Copying ../build/python_parameters/python_parameters.egg-info to /home/cvar/ros2_ws/src/install/python_parameters/lib/python3.8/site-packages/python_parameters-0.0.0-py3.8.egg-info\n'}
+[0.919159] (python_parameters) StdoutLine: {'line': b'running install_scripts\n'}
+[0.935407] (python_parameters) StdoutLine: {'line': b'Installing minimal_param_node script to /home/cvar/ros2_ws/src/install/python_parameters/lib/python_parameters\n'}
+[0.935745] (python_parameters) StdoutLine: {'line': b"writing list of installed files to '/home/cvar/ros2_ws/src/build/python_parameters/install.log'\n"}
+[0.957638] (python_parameters) CommandEnded: {'returncode': 0}
+[0.975660] (python_parameters) JobEnded: {'identifier': 'python_parameters', 'rc': 0}
+[0.976474] (-) EventReactorShutdown: {}
