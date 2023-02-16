@@ -2,4 +2,4 @@ string order
 ---
 string result
 ---
-float64[] distance
+geometry_msgs/Point[] points
