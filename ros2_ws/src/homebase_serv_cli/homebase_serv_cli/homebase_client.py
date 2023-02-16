@@ -2,7 +2,7 @@ import rclpy
 from rclpy.action import ActionClient
 from rclpy.node import Node
 
-from action_tutorials_interfaces.action import Fibonacci
+from homebase_action.action import Homebase
 
 
 class HomebaseClient(Node):
@@ -18,7 +18,7 @@ class HomebaseClient(Node):
         self._action_client.wait_for_server()
 
         # Cuando se manda la goal se define el callback para el feedback
-        self._send_goal_future = self._action_client.send_goal_async(goal_msg, feedback_callback)
+        self._send_goal_future = self._action_client.send_goal_async(goal_msg, self.feedback_callback)
 
         # Despues se especifica el callback para el resultado
         self._send_goal_future.add_done_callback(self.goal_response_callback)
@@ -45,17 +45,17 @@ class HomebaseClient(Node):
 
     # Callback para cuando llegue el feedback
     def feedback_callback(self, feedback_msg):
-        feedback = feedback_msg.feedback
+        feedback = feedback_msg.feedback.distance
+        i = 0
         for p in feedback:
-            self.get_logger().info(str(p))
-        self.get_logger().info('Received feedback: {0}'.format(feedback.partial_sequence))
+            self.get_logger().info('DRON ' + str(i) + ' ' + str(p))
 
 def main(args=None):
     rclpy.init(args=args)
 
     action_client = HomebaseClient()
 
-    order = input('Introduce una orden para el swarm')
+    order = input('Introduce una orden para el swarm \n')
 
     future = action_client.send_goal(order)
 

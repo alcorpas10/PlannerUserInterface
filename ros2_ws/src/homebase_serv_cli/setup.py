@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'homebase_server_client'
+package_name = 'homebase_serv_cli'
 
 setup(
     name=package_name,
@@ -20,6 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+        	'homebase_client = homebase_serv_cli.homebase_client:main',
+        	'homebase_server = homebase_serv_cli.homebase_server:main'
         ],
     },
 )
