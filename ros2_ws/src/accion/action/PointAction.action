@@ -1,0 +1,12 @@
+# Follow path action definition
+
+# Request
+geometry_msgs/Point goal
+
+---
+# Result
+geometry_msgs/Point result
+
+---
+# Feedback
+uint32 distance
