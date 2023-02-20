@@ -34,7 +34,7 @@ class HomebaseActionServer(Node):
 
         self.drone_points = [self.nuevoPunto() for i in range(0,n_drones)]
 
-        self.desired_points = [self.nuevoPunto()]
+        self.desired_points = [self.nuevoPunto() for i in range(0,n_drones)]
 
         self.distances = [0 for i in range(0,n_drones)]
 
@@ -86,10 +86,14 @@ class HomebaseActionServer(Node):
         while not self.points_initialized() :
             self.get_logger().info('Posicion no inicializada')
 
+        self.get_logger().info('------------------------------------------')
+
         plan = Plan()
         plan.paths = self.generate_labeled_paths()
         self.path_publisher.publish(plan)
         self.get_logger().info('PLAN =  \n' + str(plan))
+
+        self.get_logger().info('-------------Plan publicado--------------------')
 
         # Publicar la posicion de cada dron mientras vuelven
         drones_in_desired = False
@@ -160,7 +164,7 @@ def main():
 
     callback_group = ReentrantCallbackGroup()
 
-    n_drones = 1
+    n_drones = 2
     homebase_action_server = HomebaseActionServer(n_drones, callback_group)
 
     executor = MultiThreadedExecutor()

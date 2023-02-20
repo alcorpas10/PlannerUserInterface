@@ -49,6 +49,7 @@ class HomebaseClient(Node):
         i = 0
         for p in feedback:
             self.get_logger().info('DRON ' + str(i) + ' ' + str(p))
+            i = i + 1
 
 def main(args=None):
     rclpy.init(args=args)
