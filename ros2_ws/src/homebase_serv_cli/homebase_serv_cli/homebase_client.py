@@ -2,7 +2,7 @@ import rclpy
 from rclpy.action import ActionClient
 from rclpy.node import Node
 
-from homebase_action.action import Homebase
+from custom_action_msgs.action import Homebase
 
 
 class HomebaseClient(Node):

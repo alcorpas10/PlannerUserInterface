@@ -4,7 +4,7 @@ import sys
 from rclpy.action import ActionServer
 from rclpy.node import Node
 
-from homebase_action.action import Homebase
+from custom_action_msgs.action import Homebase
 from mutac_msgs.msg import Plan, LabeledPath, LabeledPoint, Label
 from geometry_msgs.msg import Point
 from mutac_msgs.msg import Metrics, Identifier
@@ -31,8 +31,10 @@ class HomebaseActionServer(Node):
 
         self.accepted_commands = ['go_homebase', 'abort']
 
+        self.act_goal_handler = None
 
-        self.drone_points = [self.nuevoPunto() for i in range(0,n_drones)]
+
+        self.drone_points = [None for i in range(0,n_drones)]
 
         self.desired_points = [self.nuevoPunto() for i in range(0,n_drones)]
 
@@ -47,30 +49,22 @@ class HomebaseActionServer(Node):
 
     def listener_callback(self,msg):
 
-        self.get_logger().info(str(msg.identifier.natural))
-
         if msg.identifier.natural <= 0 :
             return
 
         drone_id = msg.identifier.natural - 1
-        self.get_logger().info('EL ID ES ' + str(drone_id))
-        self.get_logger().info('EL MSG ES ' + str(msg))
-        if not self.point_equals(msg.position, self.drone_points[drone_id]):
-            self.drone_points[drone_id] = msg.position
-            self.get_logger().info('Actualiza Pos')
-            # self.get_logger().info('DRON ' + str(drone_id))
-            # self.get_logger().info('   X = ' + str(self.drone_points[drone_id].x))
-            # self.get_logger().info('   Y = ' + str(self.drone_points[drone_id].y))
-            # self.get_logger().info('   Z = ' + str(self.drone_points[drone_id].z))
+        self.drone_points[drone_id] = msg.position
+        # self.get_logger().info('DRON ' + str(drone_id))
+        # self.get_logger().info('   X = ' + str(self.drone_points[drone_id].x))
+        # self.get_logger().info('   Y = ' + str(self.drone_points[drone_id].y))
+        # self.get_logger().info('   Z = ' + str(self.drone_points[drone_id].z))
 
     def points_initialized(self):
-        zeroes = True
-        auxp = self.nuevoPunto()
+        init = True
         for p in self.drone_points:
-            self.get_logger().info('PUNTO = ' + str(p))
-            zeroes = zeroes and (not self.point_equals(auxp,p))
+            init = init and (p is not None)
         
-        return zeroes
+        return init
 
 
     def execute_callback(self, goal_handle):
@@ -82,6 +76,18 @@ class HomebaseActionServer(Node):
             goal_handle.canceled()
             result = 'Goal ' + str(goal_handle.request.order) + ' not in available orders'
             return result
+
+        self.set_action_params(goal_handle.request.order)
+
+        if self.act_goal_handler is not None:
+            self.get_logger().info('------------------------------------------------------------------------------------------------------------------')
+            self.get_logger().info('Recibida la orden de ' + str(goal_handle.request.order) + ' mientras se completaba la actual, cancelando la actual')
+            self.get_logger().info('------------------------------------------------------------------------------------------------------------------')
+            abort_result = Homebase.Result()
+            abort_result.result = 'Recibida la orden de ' + str(goal_handle.request.order) + ' mientras se completaba la actual, cancelando la actual'
+            self.act_goal_handler.abort()
+
+        self.act_goal_handler = goal_handle
 
         while not self.points_initialized() :
             self.get_logger().info('Posicion no inicializada')
@@ -100,20 +106,28 @@ class HomebaseActionServer(Node):
         while not drones_in_desired:
             # for i in range(0, self.n_drones):
                 # self.get_logger().info('El dron ' + str(i) + ' esta en el punto ' + str(self.drone_points[i]))
-
-            drones_in_desired = self.points_is_desired()
-            feedback_msg = Homebase.Feedback()
-            feedback_msg.distance = self.generate_feedback_msg()
-            self.get_logger().info(str(feedback_msg))
-            goal_handle.publish_feedback(feedback_msg)
+            if goal_handle.request.order == self.act_goal_handler.request.order:
+                drones_in_desired = self.points_is_desired()
+                feedback_msg = Homebase.Feedback()
+                feedback_msg.distance = self.generate_feedback_msg()
+                self.act_goal_handler.publish_feedback(feedback_msg)
         
         goal_handle.succeed()
 
         result = Homebase.Result()
         result.result = 'Drones en base'
 
+        self.act_goal_handler = None
 
         return result
+
+    def set_action_params(self, order):
+        if order == 'go_homebase':
+            self.desired_points = [self.nuevoPunto() for i in range(0,self.n_drones)]
+        elif order == 'abort' :
+            self.desired_points = [self.drone_points[i] for i in range(0,self.n_drones)]
+        else:
+            self.desired_points = [self.nuevoPunto() for i in range(0,self.n_drones)]
 
     def generate_feedback_msg(self):
         for i in range(0, self.n_drones):
