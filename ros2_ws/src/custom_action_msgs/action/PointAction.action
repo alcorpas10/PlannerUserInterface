@@ -9,4 +9,4 @@ geometry_msgs/Point result
 
 ---
 # Feedback
-uint32 distance
+float32 distance

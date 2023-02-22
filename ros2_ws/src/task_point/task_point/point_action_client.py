@@ -2,8 +2,11 @@ import rclpy
 from rclpy.action import ActionClient
 from rclpy.node import Node
 
-from accion.action import PointAction
+from custom_action_msgs.action import PointAction
 from geometry_msgs.msg import Point
+from .action_window import ActionWindow
+
+from PySide6.QtWidgets import QApplication
 
 
 class PointActionClient(Node):
@@ -11,6 +14,15 @@ class PointActionClient(Node):
     def __init__(self):
         super().__init__('point_action_client')
         self._action_client = ActionClient(self, PointAction, 'point_action')
+
+        app = QApplication([])
+        app.setApplicationName("Point action client viewer")
+
+        self.window = ActionWindow()
+        self.window.show()
+
+        app.exec()
+
 
     def send_goal(self, order):
         goal_msg = PointAction.Goal()
@@ -25,22 +37,22 @@ class PointActionClient(Node):
     def goal_response_callback(self, future):
         goal_handle = future.result()
         if not goal_handle.accepted:
-            self.get_logger().info('Goal rejected :(')
+            self.window.set_text('Goal rejected :(\n')
             return
 
-        self.get_logger().info('Goal accepted :)')
+        self.window.set_text('Goal accepted :)\n')
 
         self._get_result_future = goal_handle.get_result_async()
         self._get_result_future.add_done_callback(self.get_result_callback)
 
     def get_result_callback(self, future):
         result = future.result().result
-        self.get_logger().info('Final point: {0}'.format(result.result))
+        self.window.set_text('Final point: ' + result.result + '\n')
         rclpy.shutdown()
 
     def feedback_callback(self, feedback_msg):
         feedback = feedback_msg.feedback
-        self.get_logger().info('Distance traveled: {0}'.format(feedback.distance))
+        self.window.set_text('Distance traveled: ' + feedback.distance + '\n')
 
 
 def main(args=None):
@@ -48,9 +60,9 @@ def main(args=None):
 
     action_client = PointActionClient()
     
-    x = float(input("Inserte variable X: "))
-    y = float(input("Inserte variable Y: "))
-    z = float(input("Inserte variable Z: "))
+    x = float(input("Insert X coordinate: "))
+    y = float(input("Insert Y coordinate: "))
+    z = float(input("Insert Z coordinate: "))
 
     action_client.send_goal(Point(x=x, y=y, z=z))
 

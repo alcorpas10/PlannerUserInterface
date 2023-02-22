@@ -178,7 +178,7 @@ def main():
 
     callback_group = ReentrantCallbackGroup()
 
-    n_drones = 2
+    n_drones = 1
     homebase_action_server = HomebaseActionServer(n_drones, callback_group)
 
     executor = MultiThreadedExecutor()
