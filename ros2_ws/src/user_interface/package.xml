@@ -9,7 +9,7 @@
 
   <depend>rclpy</depend>
   <depend>geometry_msgs</depend>
-  <depend>task_point</depend>
+  <depend>point_task</depend>
   <depend>homebase_serv_cli</depend>
 
   <test_depend>ament_copyright</test_depend>

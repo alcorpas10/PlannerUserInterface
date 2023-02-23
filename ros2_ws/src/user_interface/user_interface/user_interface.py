@@ -1,78 +1,110 @@
 import rclpy
 from geometry_msgs.msg import Point
 
-from task_point.point_action_client import PointActionClient
+from point_task.point_action_client import PointActionClient
 from homebase_serv_cli.homebase_client import HomebaseClient
+
+from .main_window import MainWindow
+from PySide6.QtCore import (QMetaObject, QRect, Signal)
+from PySide6.QtWidgets import (QApplication, QTabBar, QMainWindow, QTextEdit, QWidget)
+
+import sys
 
 from .action_client_class import ActionClientClass
 
-class UserInterface():
+
+class UserInterface(MainWindow):
+    signal = Signal(str)
 
     def __init__(self):
-        print("Welcome to the user interface.")
+        MainWindow.__init__(self)
+        self.action_list = []
+        self.id = 0
 
-        rclpy.init()
 
-    def execute(self):
-        while True:
-            self.print_menu()
-            self.read_input()
-
-    def print_menu(self):
-        print("Available commands:")
-        print("point_task: send a point task to the drone")
-        print("go_homebase: send a go_homebase task to the drone")
-        print("abort: abort the go_homebase task")
-        print("exit: exit the program")
+    def setupUi(self, MainWindow):
+        super().setupUi(MainWindow)
+        
+        self.signal.connect(self.update_text)
+        self.pushButton.clicked.connect(self.read_input)
+        self.tabWidget.tabCloseRequested.connect(self.close_action_tab)
 
     def read_input(self):
-        cmd = input("Insert command: ")
+        text = self.textEdit.toPlainText().split(' ')
+
+        cmd = text[0]
         
         if cmd == 'point_task':
-            self.alex()
+            self.point_task(text)
         elif cmd == 'go_homebase' or cmd == 'abort':
-            self.guille(order=cmd)
+            self.homebase_task(cmd)
         #elif cmd == 'inspect':
             #self.previous()
         elif cmd == 'exit':
-            print("Exiting program...")
+            self.textEdit.append("Exiting...")
             exit()
         else:
-            print("Invalid input, please try again.")
+            self.textEdit.append("Invalid input, please try again.")
 
-    def alex(self):
-        print('Insert the coordinates of the point:')
+    def update_text(self, text):
+        id = text.split(' ')[0]
+        self.action_list[int(id)].append(text[len(id)+1:])
 
-        x = float(input("Insert X coordinate: "))
-        y = float(input("Insert Y coordinate: "))
-        z = float(input("Insert Z coordinate: "))
+    def close_action_tab(self, index):
+        if index == 0:
+            return
+        self.action_list.pop(index-1)
+        self.tabWidget.removeTab(index)
 
-        pt_action_client = PointActionClient()
-        action = ActionClientClass(pt_action_client)
+    def point_task(self, text):
+        x = float(text[1])
+        y = float(text[2])
+        z = float(text[3])
+
+        rclpy.init()
+        pt_action_client = PointActionClient(self.id, self.signal)
+
+        self.new_action_tab()
+        action = ActionClientClass(pt_action_client, Point(x=x, y=y, z=z))
         action.daemon = True
-        action.start(Point(x=x, y=y, z=z))
+        action.start()
 
-    def guille(self, order=None):
-        hb_action_client = HomebaseClient()
-        action = ActionClientClass(hb_action_client)
+    def homebase_task(self, order):
+        rclpy.init()
+        hb_action_client = HomebaseClient(self.id, self.signal)
+
+        self.new_action_tab()
+        action = ActionClientClass(hb_action_client, order)
         action.daemon = True
-        action.start(order)
+        action.start()
+    
+    def new_action_tab(self):
+        tab = QWidget()
+        tab.setObjectName(u"tab_"+str(len(self.action_list)))
+
+        textEdit = QTextEdit(tab)
+        textEdit.setObjectName(u"textEdit_"+str(len(self.action_list)))
+        textEdit.setGeometry(QRect(20, 20, 751, 481))
+        textEdit.setReadOnly(True)
+
+        self.tabWidget.addTab(tab, "")
+        self.action_list.append(textEdit)
+        self.tabWidget.tabBar().setTabButton(len(self.action_list)+1, QTabBar.RightSide, None)
+        self.tabWidget.setTabText(self.tabWidget.indexOf(tab), "Action "+str(len(self.action_list)))
+        self.tabWidget.setCurrentIndex(len(self.action_list))
+
+        QMetaObject.connectSlotsByName(self.MainWindow)
+
+        self.id += 1
 
 
 def main(args=None):
+    app = QApplication([])
+    window = QMainWindow()
     ui = UserInterface()
-    ui.execute()
-
-    # pt_action_client = PointActionClient()
-    # hb_action_client = HomebaseClient()
-    # ui = UserInterface(pt_action_client, hb_action_client)
-
-    # executor = MultiThreadedExecutor()
-    # executor.add_node(pt_action_client)
-    # executor.add_node(hb_action_client)
-    # executor.add_node(ui)
-
-    # executor.spin()
+    ui.setupUi(window)
+    window.show()
+    sys.exit(app.exec_())
 
 
 if __name__ == '__main__':

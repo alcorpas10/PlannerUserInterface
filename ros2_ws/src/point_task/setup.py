@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'task_point'
+package_name = 'point_task'
 
 setup(
     name=package_name,
@@ -20,8 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'server = task_point.point_action_server:main',
-        	'client = task_point.point_action_client:main',
+            'server = point_task.point_action_server:main',
+        	'client = point_task.point_action_client:main',
         ],
     },
 )

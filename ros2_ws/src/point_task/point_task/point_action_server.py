@@ -18,11 +18,8 @@ class PointActionServer(Node):
 
         self.num_drones = num_drones
 
-        self.old_position = []
-        self.new_position = []
-        for i in range(self.num_drones):
-            self.old_position.append(Point(x=0.0, y=0.0, z=0.0))
-            self.new_position.append(Point(x=0.0, y=0.0, z=0.0))
+        self.old_position = [None for i in range(num_drones)]
+        self.new_position = [None for i in range(num_drones)]
         
         callback_group = ReentrantCallbackGroup()
 

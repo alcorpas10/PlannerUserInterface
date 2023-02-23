@@ -3,9 +3,8 @@ from rclpy.action import ActionClient
 from rclpy.node import Node
 
 from custom_action_msgs.action import Homebase
-from .action_window import ActionWindow
 
-from PySide6.QtWidgets import QApplication
+import time
 
 """import sys
 from PySide6.QtCore import QThread, Signal
@@ -55,19 +54,15 @@ if __name__ == "__main__":
     # Ejecuta la aplicación
     sys.exit(app.exec())"""
 
+
 class HomebaseClient(Node):
 
-    def __init__(self):
+    def __init__(self, id, signal):
         super().__init__('homebase_action_client')
         self._action_client = ActionClient(self, Homebase, 'homebase')
+        self.id = id
 
-        app = QApplication([])
-        app.setApplicationName("Homebase client viewer")
-
-        self.window = ActionWindow()
-        self.window.show()
-
-        app.exec()
+        self.signal = signal
 
 
     def send_goal(self, order):
@@ -85,13 +80,14 @@ class HomebaseClient(Node):
     # Goal aceptada o rechazada
     def goal_response_callback(self, future):
         goal_handle = future.result()
+
         # Si rechazada, return
         if not goal_handle.accepted:
-            self.window.set_text('Goal rejected :(\n')
+            self.signal.emit(str(self.id)+' Goal rejected :(')
             return
 
         # Si aceptada, informar y pedir resultado
-        self.window.set_text('Goal accepted :)\n')
+        self.signal.emit(str(self.id)+' Goal accepted :)')
 
         self._get_result_future = goal_handle.get_result_async()
         self._get_result_future.add_done_callback(self.get_result_callback)
@@ -99,7 +95,7 @@ class HomebaseClient(Node):
     # Callback para cuando llegue el resultado
     def get_result_callback(self, future):
         result = future.result().result
-        self.window.set_text('Result: ' + result.result + '\n')
+        self.signal.emit(str(self.id)+' Result: ' + result.result)
         rclpy.shutdown()
 
     # Callback para cuando llegue el feedback
@@ -107,7 +103,7 @@ class HomebaseClient(Node):
         feedback = feedback_msg.feedback.distance
         i = 0
         for p in feedback:
-            self.window.set_text('DRON ' + str(i) + ' ' + str(p) + '\n')
+            self.signal.emit(str(self.id)+' DRON ' + str(i) + ' ' + str(p))
             i = i + 1
 
 def main(args=None):
