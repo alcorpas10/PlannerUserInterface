@@ -6,54 +6,6 @@ from custom_action_msgs.action import Homebase
 
 import time
 
-"""import sys
-from PySide6.QtCore import QThread, Signal
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QTextEdit
-
-
-class MainWindow(QWidget):
-    def __init__(self):
-        super().__init__()
-
-        # Crea el QTextEdit
-        self.text_edit = QTextEdit()
-        self.text_edit.setReadOnly(True)
-
-        # Agrega el QTextEdit al layout
-        layout = QVBoxLayout()
-        layout.addWidget(self.text_edit)
-        self.setLayout(layout)
-
-    def update_text(self, text):
-        # Agrega el texto al QTextEdit
-        self.text_edit.append(text)
-
-
-class WindowThread(QThread):
-    window_created = Signal(QWidget)
-
-    def run(self):
-        # Crea la ventana
-        window = MainWindow()
-        # Emite la señal para que se pueda acceder a la ventana creada
-        self.window_created.emit(window)
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-
-    # Crea el hilo para la ventana
-    window_thread = WindowThread()
-
-    # Conecta la señal del hilo con la función que muestra la ventana
-    window_thread.window_created.connect(lambda window: window.show())
-
-    # Inicia el hilo
-    window_thread.start()
-
-    # Ejecuta la aplicación
-    sys.exit(app.exec())"""
-
 
 class HomebaseClient(Node):
 
@@ -63,7 +15,16 @@ class HomebaseClient(Node):
         self.id = id
 
         self.signal = signal
+        self.feedback = None
 
+        self.timer_period = 0.5
+        self.timer = self.create_timer(self.timer_period, self.timer_callback)
+
+    
+    def timer_callback(self):
+        if self.feedback is not None:
+            for i, p in enumerate(self.feedback):
+                self.signal.emit(str(self.id)+' DRON ' + str(i) + ' ' + str(p))
 
     def send_goal(self, order):
         goal_msg = Homebase.Goal()
@@ -100,11 +61,8 @@ class HomebaseClient(Node):
 
     # Callback para cuando llegue el feedback
     def feedback_callback(self, feedback_msg):
-        feedback = feedback_msg.feedback.distance
-        i = 0
-        for p in feedback:
-            self.signal.emit(str(self.id)+' DRON ' + str(i) + ' ' + str(p))
-            i = i + 1
+        self.feedback = feedback_msg.feedback.distance
+
 
 def main(args=None):
     rclpy.init(args=args)

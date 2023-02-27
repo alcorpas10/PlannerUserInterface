@@ -20,8 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-        	'homebase_client = homebase_serv_cli.homebase_client:main',
-        	'homebase_server = homebase_serv_cli.homebase_server:main'
+        	'client = homebase_serv_cli.homebase_client:main',
+        	'server = homebase_serv_cli.homebase_server:main'
         ],
     },
 )

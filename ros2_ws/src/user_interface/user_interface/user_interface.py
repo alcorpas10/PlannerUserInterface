@@ -5,8 +5,13 @@ from point_task.point_action_client import PointActionClient
 from homebase_serv_cli.homebase_client import HomebaseClient
 
 from .main_window import MainWindow
+from .image_dialog import ImageDialog
 from PySide6.QtCore import (QMetaObject, QRect, Signal)
 from PySide6.QtWidgets import (QApplication, QTabBar, QMainWindow, QTextEdit, QWidget)
+
+from PySide6.QtGui import QImage, QPixmap
+
+import numpy as np
 
 import sys
 
@@ -14,7 +19,8 @@ from .action_client_class import ActionClientClass
 
 
 class UserInterface(MainWindow):
-    signal = Signal(str)
+    signal_str = Signal(str)
+    signal_img = Signal(np.ndarray)
 
     def __init__(self):
         MainWindow.__init__(self)
@@ -25,9 +31,10 @@ class UserInterface(MainWindow):
     def setupUi(self, MainWindow):
         super().setupUi(MainWindow)
         
-        self.signal.connect(self.update_text)
+        self.signal_str.connect(self.update_text)
+        self.signal_img.connect(self.show_image)
         self.pushButton.clicked.connect(self.read_input)
-        self.tabWidget.tabCloseRequested.connect(self.close_action_tab)
+        #self.tabWidget.tabCloseRequested.connect(self.close_action_tab)
 
     def read_input(self):
         text = self.textEdit.toPlainText().split(' ')
@@ -41,7 +48,7 @@ class UserInterface(MainWindow):
         #elif cmd == 'inspect':
             #self.previous()
         elif cmd == 'exit':
-            self.textEdit.append("Exiting...")
+            print("Exiting...")
             exit()
         else:
             self.textEdit.append("Invalid input, please try again.")
@@ -49,6 +56,12 @@ class UserInterface(MainWindow):
     def update_text(self, text):
         id = text.split(' ')[0]
         self.action_list[int(id)].append(text[len(id)+1:])
+
+    def show_image(self, img):
+        dialog = ImageDialog()
+        dialog.show()
+
+        dialog.show_image(img)
 
     def close_action_tab(self, index):
         if index == 0:
@@ -62,7 +75,7 @@ class UserInterface(MainWindow):
         z = float(text[3])
 
         rclpy.init()
-        pt_action_client = PointActionClient(self.id, self.signal)
+        pt_action_client = PointActionClient(self.id, self.signal_str, self.signal_img)
 
         self.new_action_tab()
         action = ActionClientClass(pt_action_client, Point(x=x, y=y, z=z))
@@ -71,7 +84,7 @@ class UserInterface(MainWindow):
 
     def homebase_task(self, order):
         rclpy.init()
-        hb_action_client = HomebaseClient(self.id, self.signal)
+        hb_action_client = HomebaseClient(self.id, self.signal_str)
 
         self.new_action_tab()
         action = ActionClientClass(hb_action_client, order)

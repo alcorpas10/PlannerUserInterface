@@ -29,7 +29,7 @@ class MainWindow(QMainWindow):
         self.tabWidget = QTabWidget(self.centralwidget)
         self.tabWidget.setObjectName(u"tabWidget")
         self.tabWidget.setGeometry(QRect(0, 0, 801, 551))
-        self.tabWidget.setTabsClosable(True)
+        #self.tabWidget.setTabsClosable(True)
         
         self.tab = QWidget()
         self.tab.setObjectName(u"tab")

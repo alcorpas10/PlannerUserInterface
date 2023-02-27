@@ -5,8 +5,8 @@ geometry_msgs/Point goal
 
 ---
 # Result
-geometry_msgs/Point result
+sensor_msgs/Image[] result
 
 ---
 # Feedback
-float32 distance
+float64[] distance

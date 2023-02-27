@@ -11,6 +11,7 @@
   <depend>action_msgs</depend>
   <depend>custom_action_msgs</depend>
   <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
   <depend>mutac_msgs</depend>
   
   <test_depend>ament_copyright</test_depend>

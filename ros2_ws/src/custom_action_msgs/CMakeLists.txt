@@ -13,6 +13,7 @@ find_package(rosidl_default_generators REQUIRED)
 
 set(PROJECT_DEPENDENCIES
   geometry_msgs
+  sensor_msgs
   builtin_interfaces
   std_msgs
 )

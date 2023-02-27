@@ -23,22 +23,22 @@ class HomebaseActionServer(Node):
             'homebase',
             self.execute_callback, callback_group=callback_group)
         
-
-        self.path_publisher = self.create_publisher(Plan, '/mutac/planned_paths', 100, callback_group=callback_group)
-        self.pos_listener = self.create_subscription(Metrics, '/mutac/performance_metrics', self.listener_callback, 100, callback_group=callback_group)
-
         self.n_drones = n_drones
 
+        self.drone_points = [None for i in range(0,n_drones)]
+        
         self.accepted_commands = ['go_homebase', 'abort']
 
         self.act_goal_handler = None
 
-
-        self.drone_points = [None for i in range(0,n_drones)]
-
         self.desired_points = [self.nuevoPunto() for i in range(0,n_drones)]
 
         self.distances = [0 for i in range(0,n_drones)]
+
+        self.path_publisher = self.create_publisher(Plan, '/mutac/planned_paths', 100, callback_group=callback_group)
+        self.pos_listener = [self.create_subscription(Metrics, '/mutac/drone'+str(i)+'/performance_metrics', 
+                            self.listener_callback, 100, callback_group=callback_group) for i in range(1, self.n_drones+1)]
+
 
     def nuevoPunto(self):
             p = Point()
@@ -48,10 +48,6 @@ class HomebaseActionServer(Node):
             return p
 
     def listener_callback(self,msg):
-
-        if msg.identifier.natural <= 0 :
-            return
-
         drone_id = msg.identifier.natural - 1
         self.drone_points[drone_id] = msg.position
         # self.get_logger().info('DRON ' + str(drone_id))
@@ -178,7 +174,7 @@ def main():
 
     callback_group = ReentrantCallbackGroup()
 
-    n_drones = 1
+    n_drones = 3
     homebase_action_server = HomebaseActionServer(n_drones, callback_group)
 
     executor = MultiThreadedExecutor()
