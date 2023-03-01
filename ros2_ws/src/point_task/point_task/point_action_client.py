@@ -65,16 +65,15 @@ class PointActionClient(Node):
         self.feedback = feedback_msg.feedback.distance
 
     def cancel_goal(self):
-        self.get_logger().info('Canceling goal')
-        future = self.goal_handle.cancel_goal_async()
-        future.add_done_callback(self.goal_canceled_callback)
+        self._action_client.wait_for_server()
+        self._cancel_goal_future = self._action_client._cancel_goal_async(self._send_goal_future.result())
+        self._cancel_goal_future.add_done_callback(self.goal_canceled_callback)
 
     def goal_canceled_callback(self, future):
-        cancel_response = future.result()
-        if len(cancel_response.goals_canceling) > 0:
-            self.get_logger().info('Cancelling of goal complete')
+        if future.result().return_code == 1:
+            self.signal_str.emit(str(self.id)+' Goal canceled\n')
         else:
-            self.get_logger().warning('Goal failed to cancel')
+            self.signal_str.emit(str(self.id)+' Goal failed to cancel\n')
 
 
 def main(args=None):

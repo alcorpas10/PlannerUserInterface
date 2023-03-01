@@ -24,7 +24,8 @@ class UserInterface(MainWindow):
 
     def __init__(self):
         MainWindow.__init__(self)
-        self.action_dict = {}
+        self.action_tab_dict = {}
+        self.action_client_dict = {}
         self.ids_list = []
         self.id = 0
         self.dialog = ImageDialog()
@@ -43,10 +44,12 @@ class UserInterface(MainWindow):
 
         cmd = text[0]
         
-        if cmd == 'point_task' or cmd == 'cancel':
+        if cmd == 'point_task':
             self.point_task(text)
-        elif cmd == 'go_homebase' or cmd == 'abort':
+        elif cmd == 'go_homebase':
             self.homebase_task(cmd)
+        elif cmd == 'cancel':
+            self.cancel_tasks()
         #elif cmd == 'inspect':
             #self.previous()
         elif cmd == 'exit':
@@ -57,7 +60,7 @@ class UserInterface(MainWindow):
 
     def update_text(self, text):
         id = text.split(' ')[0]
-        self.action_dict[int(id)].append(text[len(id)+1:])
+        self.action_tab_dict[int(id)].append(text[len(id)+1:])
 
     def show_image(self, img):
         self.dialog.show_image(img)
@@ -66,23 +69,21 @@ class UserInterface(MainWindow):
         print("Closing tab: " + str(index))
         if index == 0:
             return
-        print("Action list: " + str(self.action_dict.keys()))
-        self.action_dict.pop(self.ids_list[index-1])
+        print("Action list: " + str(self.action_tab_dict.keys()))
+        self.action_tab_dict.pop(self.ids_list[index-1])
         self.ids_list.pop(index-1)
-        print("Action list: " + str(self.action_dict.keys()))
+        print("Action list: " + str(self.action_tab_dict.keys()))
         self.tabWidget.removeTab(index)
 
     def point_task(self, text):
-        """if text == 'cancel':
-            self.action_client.send_goal(self.input)
-            self.signal_str.emit("cancel")
-            return"""
         x = float(text[1])
         y = float(text[2])
         z = float(text[3])
 
         rclpy.init()
         pt_action_client = PointActionClient(self.id, self.signal_str, self.signal_img)
+        self.action_client_dict[self.id] = pt_action_client
+
 
         self.new_action_tab()
         action = ActionClientClass(pt_action_client, Point(x=x, y=y, z=z))
@@ -92,11 +93,16 @@ class UserInterface(MainWindow):
     def homebase_task(self, order):
         rclpy.init()
         hb_action_client = HomebaseClient(self.id, self.signal_str)
+        self.action_client_dict[self.id] = hb_action_client
 
         self.new_action_tab()
         action = ActionClientClass(hb_action_client, order)
         action.daemon = True
         action.start()
+
+    def cancel_tasks(self):
+        for id in self.action_client_dict.keys():
+            self.action_client_dict[id].cancel_goal()
     
     def new_action_tab(self):
         tab = QWidget()
@@ -108,11 +114,11 @@ class UserInterface(MainWindow):
         textEdit.setReadOnly(True)
 
         self.tabWidget.addTab(tab, "")
-        self.action_dict[self.id] = textEdit
+        self.action_tab_dict[self.id] = textEdit
         self.ids_list.append(self.id)
-        self.tabWidget.tabBar().setTabButton(len(self.action_dict)+1, QTabBar.RightSide, None)
+        self.tabWidget.tabBar().setTabButton(len(self.action_tab_dict)+1, QTabBar.RightSide, None)
         self.tabWidget.setTabText(self.tabWidget.indexOf(tab), "Action "+str(self.id+1))
-        self.tabWidget.setCurrentIndex(len(self.action_dict))
+        self.tabWidget.setCurrentIndex(len(self.action_tab_dict))
 
         QMetaObject.connectSlotsByName(self.MainWindow)
 
