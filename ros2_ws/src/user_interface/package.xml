@@ -9,6 +9,8 @@
 
   <depend>rclpy</depend>
   <depend>geometry_msgs</depend>
+  <depend>mutac_msgs</depend>
+  <depend>std_msgs</depend>
   <depend>point_task</depend>
   <depend>homebase_serv_cli</depend>
 

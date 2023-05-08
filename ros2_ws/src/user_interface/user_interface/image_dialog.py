@@ -1,19 +1,22 @@
 import numpy as np
 from PySide6.QtGui import QImage, QPixmap
 from PySide6.QtWidgets import QDialog, QLabel, QHBoxLayout
-#import matplotlib.pyplot as plt
+
 
 class ImageDialog(QDialog):
     def __init__(self):
         super().__init__()
 
-        # Crear un layout vertical para el diálogo
+        # Create a horizontal layout for the dialog
         self.setLayout(QHBoxLayout(self))
+
+        # Set the dialog size
+        self.setFixedSize(800, 250)
 
     def show_image(self, img_data):
         height, width, _ = img_data.shape
 
-        # Crear un QLabel para mostrar la imagen
+        # Create a QLabel to show the images
         self.image_label = QLabel()
         self.image_label.setPixmap(QPixmap.fromImage(QImage(img_data, width, height, 3 * width, QImage.Format_RGB888)))
 
