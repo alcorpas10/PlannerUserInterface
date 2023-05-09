@@ -3,7 +3,7 @@ from rclpy.node import Node
 from rclpy import qos
 
 from threading import Thread
-from mutac_msgs.srv import GeneratePlan
+from mutac_msgs.msg import UserRequest, Identifier
 from std_msgs.msg import String
 
 class InfoNode(Node, Thread):
@@ -17,7 +17,7 @@ class InfoNode(Node, Thread):
 
         self.drone_states = []
 
-        self.user_request = self.create_publisher(String, '/planner/comms/user_request', qos.QoSProfile(reliability=qos.ReliabilityPolicy.RELIABLE, depth=10))
+        self.user_request = self.create_publisher(UserRequest, '/planner/comms/user_request', qos.QoSProfile(reliability=qos.ReliabilityPolicy.RELIABLE, depth=10))
         self.drone_response = self.create_subscription(String, '/planner/comms/drone_response', self.responseCallback, qos.QoSProfile(reliability=qos.ReliabilityPolicy.RELIABLE, depth=100))
 
 
@@ -31,8 +31,7 @@ class InfoNode(Node, Thread):
 
     def pub_request(self, input):
         if input == 'swarm_state':
-            msg = String()
-            msg.data = input
+            msg = UserRequest(identifier=Identifier(natural=-1), text=String(data=input))
             self.user_request.publish(msg)
             self.signal.emit(str(self.id)+' Request sent successfully. Waiting for responses...\n')
 
