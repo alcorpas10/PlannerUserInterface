@@ -1,7 +1,6 @@
 import rclpy
-from rclpy import Node
-from mutac_msgs.msg import Generation, Sweep
-from mutac_msgs.srv import GeneratePlan
+from mutac_msgs.msg import Generation, Sweep, DroneComms
+from mutac_msgs.srv import GeneratePlan, DroneRequest
 
 from geometry_msgs.msg import Point, Point32, Polygon
 
@@ -34,6 +33,19 @@ class UserInterface(MainWindow):
 
         rclpy.init()
 
+        self.init_service()
+
+
+    def init_service(self):
+        self.drone_request_server = self.create_service(DroneRequest, '/planner/comms/drone_request', self.droneRequestCallback)
+
+    def droneRequestCallback(self, request, response):
+        if request.type == DroneComms.CANCEL:
+            self.signal_str.emit('Cancel request received\n')
+        else:
+            self.signal_str.emit('Unknown request received\n')
+
+        return response
 
     def setupUi(self, MainWindow):
         super().setupUi(MainWindow)
@@ -50,8 +62,8 @@ class UserInterface(MainWindow):
         
         if cmd == 'inspect':
             self.inspect()
-        elif cmd == 'swarm_state':
-            self.swarm_state(text[1])
+        elif cmd == 'info':
+            self.info(text[1])
         # if cmd == 'point_task':
         #     self.point_task(text)
         # elif cmd == 'go_homebase':
@@ -114,7 +126,7 @@ class UserInterface(MainWindow):
         self.new_action_tab()
         inspect_node.start()
 
-    def swarm_state(self, text):
+    def info(self, text):
         info_node = InfoNode(self.id, self.signal_str, text)
         self.action_client_dict[self.id] = info_node
 
