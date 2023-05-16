@@ -2,24 +2,35 @@ import rclpy
 from rclpy.action import ActionClient
 from rclpy.node import Node
 
+from threading import Thread
+
 from custom_action_msgs.action import Homebase
 
 import time
 
 
-class HomebaseClient(Node):
+class HomebaseClient(Node, Thread):
 
-    def __init__(self, id, signal):
-        super().__init__('homebase_action_client')
+    def __init__(self, id, signal, input):
+        Node.__init__(self, 'homebase_client')
+        Thread.__init__(self)
+        
         self._action_client = ActionClient(self, Homebase, 'homebase')
         self.id = id
 
         self.signal = signal
         self.feedback = None
+        self.input = input
 
         self.timer_period = 0.5
         self.timer = self.create_timer(self.timer_period, self.timer_callback)
 
+        self.daemon = True
+
+
+    def run(self):
+        self.send_goal(self.input)
+        rclpy.spin(self)
     
     def timer_callback(self):
         if self.feedback is not None:
@@ -57,11 +68,24 @@ class HomebaseClient(Node):
     def get_result_callback(self, future):
         result = future.result().result
         self.signal.emit(str(self.id)+' Result: ' + result.result)
-        rclpy.shutdown()
+
+        self.signal.emit(str(self.id)+' HomebaseClient destroyed\n')
+        self.destroy_node()
 
     # Callback para cuando llegue el feedback
     def feedback_callback(self, feedback_msg):
         self.feedback = feedback_msg.feedback.distance
+
+    def cancel_goal(self):
+        self._action_client.wait_for_server()
+        self._cancel_goal_future = self._action_client._cancel_goal_async(self._send_goal_future.result())
+        self._cancel_goal_future.add_done_callback(self.goal_canceled_callback)
+
+    def goal_canceled_callback(self, future):
+        if future.result().return_code == 1 or future.result().return_code == 0:
+            self.signal.emit(str(self.id)+' Goal canceled\n')
+        else:
+            self.signal.emit(str(self.id)+' Goal failed to cancel\n')
 
 
 def main(args=None):

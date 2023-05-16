@@ -6,6 +6,8 @@ from threading import Thread
 from mutac_msgs.msg import UserRequest, Identifier
 from std_msgs.msg import String
 
+from time import sleep
+
 class InfoNode(Node, Thread):
     def __init__(self, id, signal, input):
         Node.__init__(self, 'info_node')
@@ -23,9 +25,9 @@ class InfoNode(Node, Thread):
 
     def run(self):
         self.pub_request(self.input)
-        rclpy.spin(self)
 
     def responseCallback(self, msg):
+        self.get_logger().info('Response received')
         self.drone_states.append(msg.data)
         self.signal.emit(str(self.id)+' Response received\n')
 
@@ -35,8 +37,7 @@ class InfoNode(Node, Thread):
             self.user_request.publish(msg)
             self.signal.emit(str(self.id)+' Request sent successfully. Waiting for responses...\n')
 
-            # sleep for 2 seconds to wait for responses
-            rclpy.spin_once(self, timeout_sec=2.0)
+            sleep(0.5)
 
             # print the responses
             for state in self.drone_states:

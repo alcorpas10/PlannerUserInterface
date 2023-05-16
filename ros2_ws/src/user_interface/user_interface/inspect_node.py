@@ -1,4 +1,3 @@
-import rclpy
 from rclpy.node import Node
 
 from threading import Thread
@@ -18,7 +17,6 @@ class InspectNode(Node, Thread):
 
     def run(self):
         self.pub_plan(self.plan)
-        rclpy.spin(self)
 
     def pub_plan(self, plan):
         while not self.plan_client.wait_for_service(timeout_sec=1.0):

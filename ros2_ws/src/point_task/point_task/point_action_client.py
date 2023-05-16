@@ -2,6 +2,8 @@ import rclpy
 from rclpy.action import ActionClient
 from rclpy.node import Node
 
+from threading import Thread
+
 from custom_action_msgs.action import PointAction
 from geometry_msgs.msg import Point
 
@@ -9,20 +11,28 @@ import numpy as np
 import cv2
 
 
-class PointActionClient(Node):
+class PointActionClient(Node, Thread):
 
-    def __init__(self, id, signal_str, signal_img):
-        super().__init__('point_action_client')
+    def __init__(self, id, signal_str, signal_img, input):
+        Node.__init__(self, 'point_action_client')
+        Thread.__init__(self)
         self._action_client = ActionClient(self, PointAction, 'point_action')
         self.id = id
 
         self.signal_str = signal_str
         self.signal_img = signal_img
         self.feedback = None
+        self.input = input
 
         self.timer_period = 0.5
         self.timer = self.create_timer(self.timer_period, self.timer_callback)
 
+        self.daemon = True
+
+
+    def run(self):
+        self.send_goal(self.input)
+        rclpy.spin(self)
 
     def timer_callback(self):
         if self.feedback is not None:
@@ -59,7 +69,8 @@ class PointActionClient(Node):
             self.signal_str.emit(str(self.id)+' DRON ' + str(i) + ' ' + str(img_data.shape))
             self.signal_img.emit(img_data)
 
-        rclpy.shutdown()
+        self.signal_str.emit(str(self.id)+' PointActionClient destroyed\n')
+        self.destroy_node()
 
     def feedback_callback(self, feedback_msg):
         self.feedback = feedback_msg.feedback.distance
@@ -70,7 +81,7 @@ class PointActionClient(Node):
         self._cancel_goal_future.add_done_callback(self.goal_canceled_callback)
 
     def goal_canceled_callback(self, future):
-        if future.result().return_code == 1:
+        if future.result().return_code == 1 or future.result().return_code == 0:
             self.signal_str.emit(str(self.id)+' Goal canceled\n')
         else:
             self.signal_str.emit(str(self.id)+' Goal failed to cancel\n')

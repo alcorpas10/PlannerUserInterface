@@ -1,6 +1,7 @@
 import rclpy
-from mutac_msgs.msg import Generation, Sweep, DroneComms
-from mutac_msgs.srv import GeneratePlan, DroneRequest
+from rclpy.executors import MultiThreadedExecutor
+from mutac_msgs.msg import Generation, Sweep
+from mutac_msgs.srv import GeneratePlan
 
 from geometry_msgs.msg import Point, Point32, Polygon
 
@@ -11,6 +12,7 @@ from user_interface.main_window import MainWindow
 from user_interface.image_dialog import ImageDialog
 from user_interface.inspect_node import InspectNode
 from user_interface.info_node import InfoNode
+from user_interface.server_node import ServerNode
 from PySide6.QtCore import (QMetaObject, QRect, Signal)
 from PySide6.QtWidgets import (QApplication, QTabBar, QMainWindow, QTextEdit, QWidget)
 
@@ -28,24 +30,12 @@ class UserInterface(MainWindow):
         self.action_tab_dict = {}
         self.action_client_dict = {}
         self.ids_list = []
-        self.id = 0
+        self.id = 1
         self.dialog = ImageDialog()
 
         rclpy.init()
+        self.executor = MultiThreadedExecutor()
 
-        self.init_service()
-
-
-    def init_service(self):
-        self.drone_request_server = self.create_service(DroneRequest, '/planner/comms/drone_request', self.droneRequestCallback)
-
-    def droneRequestCallback(self, request, response):
-        if request.type == DroneComms.CANCEL:
-            self.signal_str.emit('Cancel request received\n')
-        else:
-            self.signal_str.emit('Unknown request received\n')
-
-        return response
 
     def setupUi(self, MainWindow):
         super().setupUi(MainWindow)
@@ -54,6 +44,11 @@ class UserInterface(MainWindow):
         # self.signal_img.connect(self.show_image)
         self.pushButton.clicked.connect(self.read_input)
         self.tabWidget.tabCloseRequested.connect(self.close_action_tab)
+
+        node = ServerNode(0, self.signal_str, self.executor)
+        self.executor.add_node(node)
+        node.start()
+        #rclpy.shutdown()
 
     def read_input(self):
         text = self.textEdit.toPlainText().split(' ')
@@ -76,6 +71,7 @@ class UserInterface(MainWindow):
             #self.previous()
         elif cmd == 'exit':
             print("Exiting...")
+            rclpy.shutdown()
             exit()
         else:
             self.textEdit.append("Invalid input, please try again.")
@@ -84,6 +80,8 @@ class UserInterface(MainWindow):
         id = text.split(' ')[0]
         if int(id) in self.ids_list:
             self.action_tab_dict[int(id)].append(text[len(id)+1:])
+        elif int(id) == 0:
+            self.textEdit.append(text[len(id)+1:])
 
     # def show_image(self, img):
     #     self.dialog.show_image(img)
@@ -121,6 +119,7 @@ class UserInterface(MainWindow):
         genPlan = GeneratePlan.Request(generation=generation)
 
         inspect_node = InspectNode(self.id, self.signal_str, genPlan)
+        self.executor.add_node(inspect_node)
         self.action_client_dict[self.id] = inspect_node
         
         self.new_action_tab()
@@ -128,6 +127,7 @@ class UserInterface(MainWindow):
 
     def info(self, text):
         info_node = InfoNode(self.id, self.signal_str, text)
+        self.executor.add_node(info_node)
         self.action_client_dict[self.id] = info_node
 
         self.new_action_tab()

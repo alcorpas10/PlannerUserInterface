@@ -33,8 +33,12 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Plan.msg"
   "msg/State.msg"
   "msg/Sweep.msg"
+  "msg/DroneComms.msg"
+  "msg/UserRequest.msg"
   "srv/GeneratePlan.srv"
   "srv/UpdatePlan.srv"
+  "srv/Replan.srv"
+  "srv/DroneRequest.srv"
   DEPENDENCIES std_msgs geometry_msgs nav_msgs # Add packages that above messages depend on, in this case geometry_msgs for Sphere.msg
 )
 # uncomment the following section in order to fill in

@@ -62,10 +62,10 @@ class PointActionServer(Node):
         """Callback function for the action server"""
         # Get the desired position from the goal
         msg = goal_handle.request.goal
-        self.desired_position = msg
+        self.desired_position = [msg for i in range(self.n_drones)]
 
         print('------------------------------------')
-        self.get_logger().info('Executing goal '+ str(self.desired_position))
+        self.get_logger().info('Executing goal '+ str(msg))
         print('------------------------------------')
 
         # Publish the path towards the desired position
@@ -82,6 +82,14 @@ class PointActionServer(Node):
             feedback_msg.distance = self.create_feedback_message()
             goal_handle.publish_feedback(feedback_msg)
 
+        if goal_handle.is_cancel_requested:
+            goal_handle.canceled()
+
+            self.get_logger().info('Goal canceled')
+            print('------------------------------------')
+            
+            return PointAction.Result()
+        
         goal_handle.succeed()
 
         # Publish the images of the desired position as result
@@ -93,6 +101,10 @@ class PointActionServer(Node):
 
     def cancel_callback(self, cancel_request):
         """Callback function for the cancel request"""
+        self.get_logger().info('Received cancel request')
+        self.desired_position = self.new_position
+        msg = self.create_goal_message()
+        self.publisher_.publish(msg)
         return CancelResponse.ACCEPT
         
 
@@ -105,7 +117,7 @@ class PointActionServer(Node):
             identifier = Identifier(natural=i)
 
             labeled_point_init = self.create_labeled_point(self.old_position[i])
-            labeled_point_end = self.create_labeled_point(self.desired_position)
+            labeled_point_end = self.create_labeled_point(self.desired_position[i])
             
             # The path is composed by two points, the actual position and the desired position
             labeled_path = LabeledPath(identifier=identifier, points=[labeled_point_init, labeled_point_end])
@@ -137,7 +149,7 @@ class PointActionServer(Node):
     def check_goal_reached(self):
         """Checks if the goal has been reached"""
         for i in range(self.n_drones):
-            if not self.check_equals(self.new_position[i], self.desired_position):
+            if not self.check_equals(self.new_position[i], self.desired_position[i]):
                 return False
         return True
 
