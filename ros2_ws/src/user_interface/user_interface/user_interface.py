@@ -11,7 +11,7 @@ from geometry_msgs.msg import Point, Point32, Polygon
 from user_interface.main_window import MainWindow
 from user_interface.image_dialog import ImageDialog
 from user_interface.inspect_node import InspectNode
-from user_interface.info_node import InfoNode
+from user_interface.request_node import RequestNode
 from user_interface.server_node import ServerNode
 from PySide6.QtCore import (QMetaObject, QRect, Signal)
 from PySide6.QtWidgets import (QApplication, QTabBar, QMainWindow, QTextEdit, QWidget)
@@ -57,8 +57,8 @@ class UserInterface(MainWindow):
         
         if cmd == 'inspect':
             self.inspect()
-        elif cmd == 'info':
-            self.info(text[1])
+        elif cmd == 'request':
+            self.request(text[1])
         # if cmd == 'point_task':
         #     self.point_task(text)
         # elif cmd == 'go_homebase':
@@ -125,13 +125,13 @@ class UserInterface(MainWindow):
         self.new_action_tab()
         inspect_node.start()
 
-    def info(self, text):
-        info_node = InfoNode(self.id, self.signal_str, text)
-        self.executor.add_node(info_node)
-        self.action_client_dict[self.id] = info_node
+    def request(self, text):
+        request_node = RequestNode(self.id, self.signal_str, text)
+        self.executor.add_node(request_node)
+        self.action_client_dict[self.id] = request_node
 
         self.new_action_tab()
-        info_node.start()
+        request_node.start()
 
 
     # def point_task(self, text):
