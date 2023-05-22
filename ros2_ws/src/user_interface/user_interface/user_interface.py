@@ -22,6 +22,8 @@ import sys
 
 
 class UserInterface(MainWindow):
+    """Main class of the user interface. It inherits from the QT main window class
+    and implements the methods to let the user interact with the system."""
     signal_str = Signal(str)
     signal_img = Signal(np.ndarray)
 
@@ -38,8 +40,10 @@ class UserInterface(MainWindow):
 
 
     def setupUi(self, MainWindow):
+        """Setups the interface"""
         super().setupUi(MainWindow)
         
+        # The interface objects are connected to the corresponding methods
         self.signal_str.connect(self.update_text)
         # self.signal_img.connect(self.show_image)
         self.pushButton.clicked.connect(self.read_input)
@@ -77,6 +81,7 @@ class UserInterface(MainWindow):
             self.textEdit.append("Invalid input, please try again.")
 
     def update_text(self, text):
+        """Updates the text in the text box"""
         id = text.split(' ')[0]
         if int(id) in self.ids_list:
             self.action_tab_dict[int(id)].append(text[len(id)+1:])
@@ -87,6 +92,7 @@ class UserInterface(MainWindow):
     #     self.dialog.show_image(img)
 
     def close_action_tab(self, index):
+        """Closes the tab with the given index"""
         print("Closing tab: " + str(index))
         if index == 0:
             return
@@ -97,6 +103,7 @@ class UserInterface(MainWindow):
         self.tabWidget.removeTab(index)
 
     def inspect(self):
+        """Launches an inspection task by creating an InspectNode"""
         polygon1 = Polygon(points=[
             Point32(x=-2.0 , y= 2.0, z=0.0),
             Point32(x=-0.5 , y= 1.0, z=0.0),
@@ -126,6 +133,8 @@ class UserInterface(MainWindow):
         inspect_node.start()
 
     def request(self, text):
+        """Launches a request task by creating a RequestNode. The type of request 
+        is given by the text parameter"""
         request_node = RequestNode(self.id, self.signal_str, text)
         self.executor.add_node(request_node)
         self.action_client_dict[self.id] = request_node
@@ -160,6 +169,7 @@ class UserInterface(MainWindow):
     #         self.action_client_dict[int(id)].cancel_goal()
     
     def new_action_tab(self):
+        """Creates a new tab for the action"""
         tab = QWidget()
         tab.setObjectName(u"tab_"+str(self.id))
 

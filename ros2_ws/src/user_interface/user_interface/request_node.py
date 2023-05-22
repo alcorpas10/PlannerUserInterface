@@ -9,6 +9,7 @@ from std_msgs.msg import String
 from time import sleep
 
 class RequestNode(Node, Thread):
+    """Creates a node in a new thread. The node is used to send user requests to the monitoring system."""
     def __init__(self, id, signal, input):
         Node.__init__(self, 'info_node')
         Thread.__init__(self)
@@ -27,11 +28,14 @@ class RequestNode(Node, Thread):
         self.pub_request(self.input)
 
     def responseCallback(self, msg):
+        """Callback function for the drone response subscriber. It prints the response in 
+        the corresponding action tab."""
         self.get_logger().info('Response received')
         self.drone_responses.append(msg.data)
         self.signal.emit(str(self.id)+' Response received\n')
 
     def pub_request(self, input):
+        """Publishes the user request received as input to the user_request topic."""
         if input == 'swarm_state':
             msg = UserRequest(identifier=Identifier(natural=-1), text=String(data=input))
             self.user_request.publish(msg)
@@ -39,17 +43,17 @@ class RequestNode(Node, Thread):
 
             sleep(0.5)
 
-            # print the responses
+            # prints the responses
             for response in self.drone_responses:
                 self.signal.emit(str(self.id)+' DRON ' + str(response))
         elif input == 'cancel_mission':
-            msg = UserRequest(Identifier=Identifier(natural=-1), text=String(data=input))
+            msg = UserRequest(identifier=Identifier(natural=-1), text=String(data=input))
             self.user_request.publish(msg)
             self.signal.emit(str(self.id)+' Cancel request sent successfully. Waiting for responses...\n')
 
             sleep(0.5)
 
-            # print the responses
+            # prints the responses
             for response in self.drone_responses:
                 self.signal.emit(str(self.id)+' DRON ' + str(response))            
         else:

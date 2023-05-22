@@ -4,6 +4,7 @@ from threading import Thread
 from mutac_msgs.srv import GeneratePlan
 
 class InspectNode(Node, Thread):
+    """Creates a node in a new thread. The node is used to send the plan to the planner."""
     def __init__(self, id, signal, plan):
         Node.__init__(self, 'interface_node')
         Thread.__init__(self)
@@ -19,6 +20,7 @@ class InspectNode(Node, Thread):
         self.pub_plan(self.plan)
 
     def pub_plan(self, plan):
+        """Publishes the plan to the corresponding planner service."""
         while not self.plan_client.wait_for_service(timeout_sec=1.0):
             # self.get_logger().warn('Service not available, waiting again...')
             self.signal.emit(str(self.id)+' Service not available, waiting again...\n')
