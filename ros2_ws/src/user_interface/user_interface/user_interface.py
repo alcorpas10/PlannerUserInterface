@@ -18,6 +18,7 @@ from PySide6.QtWidgets import (QApplication, QTabBar, QMainWindow, QTextEdit, QW
 
 import numpy as np
 
+from time import time
 import sys
 
 
@@ -55,14 +56,15 @@ class UserInterface(MainWindow):
         #rclpy.shutdown()
 
     def read_input(self):
+        print('Input received at '+str(time()))
         text = self.textEdit.toPlainText().split(' ')
 
         cmd = text[0]
         
         if cmd == 'inspect':
-            self.inspect()
+            self.inspect(text[1:])
         elif cmd == 'request':
-            self.request(text[1])
+            self.request(text[1:])
         # if cmd == 'point_task':
         #     self.point_task(text)
         # elif cmd == 'go_homebase':
@@ -102,24 +104,45 @@ class UserInterface(MainWindow):
         print("Action list: " + str(self.action_tab_dict.keys()))
         self.tabWidget.removeTab(index)
 
-    def inspect(self):
+    def inspect(self, text):
         """Launches an inspection task by creating an InspectNode"""
-        polygon1 = Polygon(points=[
-            Point32(x=-2.0 , y= 2.0, z=0.0),
-            Point32(x=-0.5 , y= 1.0, z=0.0),
-            Point32(x=-0.5 , y=-2.0, z=0.0),
-            Point32(x=-2.0 , y=-2.0, z=0.0)])
-        polygon2 = Polygon(points=[
-            Point32(x= 0.0 , y= 2.0, z=0.0),
-            Point32(x= 2.0 , y= 2.0, z=0.0),
-            Point32(x= 2.0 , y=-1.0, z=0.0),
-            Point32(x= 0.0 , y= 0.0, z=0.0)])
+        if 'east' in text:
+            polygon2 = Polygon(points=[
+                Point32(x= 0.0 , y= 2.0, z=0.0),
+                Point32(x= 2.0 , y= 2.0, z=0.0),
+                Point32(x= 2.0 , y=-1.0, z=0.0),
+                Point32(x= 0.0 , y= 0.0, z=0.0)])
 
-        sweeps = [
-            Sweep(polygon=polygon1,
-                orientation=Point(x=0.0, y=-0.5, z=0.0)),
-            Sweep(polygon=polygon2,
-                orientation=Point(x=0.0, y=-0.5, z=0.0))]
+            sweeps = [
+                Sweep(polygon=polygon2,
+                    orientation=Point(x=0.0, y=-0.5, z=0.0))]
+        elif 'west' in text:
+            polygon1 = Polygon(points=[
+                Point32(x=-2.0 , y= 2.0, z=0.0),
+                Point32(x=-0.5 , y= 1.0, z=0.0),
+                Point32(x=-0.5 , y=-2.0, z=0.0),
+                Point32(x=-2.0 , y=-2.0, z=0.0)])
+
+            sweeps = [
+                Sweep(polygon=polygon1,
+                    orientation=Point(x=0.0, y=-0.5, z=0.0))]
+        else:
+            polygon1 = Polygon(points=[
+                Point32(x=-2.0 , y= 2.0, z=0.0),
+                Point32(x=-0.5 , y= 1.0, z=0.0),
+                Point32(x=-0.5 , y=-2.0, z=0.0),
+                Point32(x=-2.0 , y=-2.0, z=0.0)])
+            polygon2 = Polygon(points=[
+                Point32(x= 0.0 , y= 2.0, z=0.0),
+                Point32(x= 2.0 , y= 2.0, z=0.0),
+                Point32(x= 2.0 , y=-1.0, z=0.0),
+                Point32(x= 0.0 , y= 0.0, z=0.0)])
+
+            sweeps = [
+                Sweep(polygon=polygon1,
+                    orientation=Point(x=0.0, y=-0.5, z=0.0)),
+                Sweep(polygon=polygon2,
+                    orientation=Point(x=0.0, y=-0.5, z=0.0))]
 
         generation = Generation(sweeps=sweeps)
 
